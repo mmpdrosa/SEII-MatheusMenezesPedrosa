@@ -1,0 +1,14 @@
+1) qual o limite de bytes a serem enviados por pacotes TCP e UDP;
+
+Para o protocolo TCP IPv4 são 65535 - 80 (ou 20 por padrão) do cabeçalho TCP - 20 do cabeçalho IP = 65435 (ou 65495) bytes.
+Para o protocolo UDP IPv4 são 65535 - 8 do cabeçalho UDP - 20 do cabeçalho IP = 65507 bytes.
+
+2) como um arquivo grande pode ser transmitido via internet;
+
+Pode ser transmitido através dos protocolos TCP e UDP.
+
+3) qual a diferença entre as implementações TCP e UDP para esse problema.
+
+Dependendo do objetivo, um protocolo é melhor que o outro.
+Por exemplo, se a busca for por uma alta confiabilidade do conteúdo, ordenação do dados, tempo de transmissão não muito crítico, retransmissão  de pacotes e verificação/recuperação de erros, o protocolo TCP é melhor.
+Agora, se a intenção é uma transmissão de dados rápida, eficiente e sem confiabilidade, o protocolo UDP é a melhor escolha.
