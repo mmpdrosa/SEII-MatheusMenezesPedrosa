@@ -1,12 +1,18 @@
-import { styled } from "..";
 import Link from 'next/link'
+
+import { styled } from '..'
 
 export const HomeContainer = styled('div', {
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-  }
+  },
+
+  h1: {
+    color: '$gray700',
+    fontSize: '$5',
+  },
 })
 
 export const HomeNav = styled('nav', {
@@ -20,8 +26,8 @@ export const HomeNav = styled('nav', {
     display: 'flex',
     alignItems: 'center',
     color: '$white',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 })
 
 export const RoomsContainer = styled('main', {
@@ -32,26 +38,26 @@ export const RoomsContainer = styled('main', {
   gap: '1rem',
 })
 
-export const Room = styled(Link, {
+export const RoomCard = styled(Link, {
   variants: {
     type: {
       bedroom: {
-        backgroundColor: '#324438',
-        color: '#91C799'
+        backgroundColor: '$green100',
+        color: '$green900',
       },
       kitchen: {
-        backgroundColor: '#574B2F',
-        color: '#F6D775'
+        backgroundColor: '$yellow100',
+        color: '$yellow900',
       },
       office: {
-        backgroundColor: '#823333',
-        color: '#ED8484'
+        backgroundColor: '$blue100',
+        color: '$blue900',
       },
       livingRoom: {
-        backgroundColor: '#313F57',
-        color: '#92B2F2'
-      }
-    }
+        backgroundColor: '$red100',
+        color: '$red900',
+      },
+    },
   },
 
   display: 'flex',
@@ -59,10 +65,9 @@ export const Room = styled(Link, {
   gap: '3rem',
   padding: '1rem',
   borderRadius: '8px',
-  backgroundColor: '$white',
   textDecoration: 'none',
 
   span: {
-    fontSize: '1.25rem',
-  }
+    fontSize: '$3',
+  },
 })

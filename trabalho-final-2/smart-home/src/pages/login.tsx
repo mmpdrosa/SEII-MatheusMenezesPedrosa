@@ -1,19 +1,20 @@
-import { GetServerSideProps } from "next";
-import Head from "next/head";
-import { parseCookies } from "nookies";
-import { useContext } from "react";
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import { parseCookies } from 'nookies'
+import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
-import { AuthContext } from "../contexts/AuthContext";
-import { 
-  SignInContainer, 
-  SignInForm, 
-  SignInInputFild, 
+
+import { AuthContext } from '../contexts/AuthContext'
+import {
   ForgotPassword,
-} from "../styles/pages/login";
+  SignInContainer,
+  SignInForm,
+  SignInInputFild,
+} from '../styles/pages/login'
 
 type loginFormData = {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export default function Login() {
@@ -27,17 +28,15 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Sign In</title>
+        <title>Entrar</title>
       </Head>
       <SignInContainer>
-        <h2>Sign in to your account</h2>
+        <h1>Entre com a sua conta</h1>
         <SignInForm onSubmit={handleSubmit(handleSignIn)}>
           <input type="hidden" name="remember" defaultValue="true" />
           <SignInInputFild>
             <div>
-              <label htmlFor="email-address">
-                Email
-              </label>
+              <label htmlFor="email-address">Email</label>
               <input
                 {...register('email')}
                 id="email-address"
@@ -45,34 +44,28 @@ export default function Login() {
                 type="email"
                 autoComplete="email"
                 required
-                placeholder="Type your email"
+                placeholder="Digite seu email"
               />
             </div>
             <div>
-              <label htmlFor="password">
-                Password
-              </label>
+              <label htmlFor="password">Senha</label>
               <input
-              {...register('password')}
+                {...register('password')}
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                placeholder="Type your password"
+                placeholder="Digite sua senha"
               />
             </div>
           </SignInInputFild>
 
           <ForgotPassword>
-            <a href="#">
-              Forgot your password?
-            </a>
+            <a href="#">Esqueceu sua senha?</a>
           </ForgotPassword>
 
-          <button type="submit">
-            Sign in
-          </button>
+          <button type="submit">Entrar</button>
         </SignInForm>
       </SignInContainer>
     </>
@@ -80,18 +73,18 @@ export default function Login() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { ['smart-home.token']: token } = parseCookies(ctx)
+  const { 'smart-home.token': token } = parseCookies(ctx)
 
   if (token) {
     return {
       redirect: {
         destination: '/',
-        permanent: false
-      }
+        permanent: false,
+      },
     }
   }
 
   return {
-    props: {}
+    props: {},
   }
 }

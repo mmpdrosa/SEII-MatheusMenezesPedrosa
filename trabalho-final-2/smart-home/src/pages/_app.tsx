@@ -1,8 +1,8 @@
-import { AppProps } from "next/app"
-import { globalStyles } from "../styles/global"
+import { AppProps } from 'next/app'
 
-import { Container } from "../styles/pages/app"
-import { AuthProvider } from "../contexts/AuthContext"
+import { AuthProvider } from '../contexts/AuthContext'
+import { globalStyles } from '../styles/global'
+import { Container } from '../styles/pages/app'
 
 globalStyles()
 
@@ -12,8 +12,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <Component {...pageProps} />
       </AuthProvider>
-      
     </Container>
   )
 }
-

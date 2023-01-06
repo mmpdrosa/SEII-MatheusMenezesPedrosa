@@ -1,30 +1,30 @@
-import { createContext, ReactNode, useEffect, useState } from 'react'
-import Router from 'next/router'
-import { 
-  getAuth, 
-  onAuthStateChanged, 
-  signInWithEmailAndPassword, 
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
+import Router from 'next/router'
 import { destroyCookie, setCookie } from 'nookies'
+import { createContext, ReactNode, useEffect, useState } from 'react'
 
-import { app } from '../configs/firebase'
+import { firebase } from '../lib/firebase'
 
 type SignInData = {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 type User = {
-  uid: string | null;
-  email: string | null;
-  name: string | null;
+  uid: string | null
+  email: string | null
+  name: string | null
 }
 
 type AuthContextType = {
-  user: User | null;
-  logIn: (data: SignInData) => Promise<void>;
-  logOut: () => Promise<void>;
+  user: User | null
+  logIn: (data: SignInData) => Promise<void>
+  logOut: () => Promise<void>
 }
 
 type AuthProviderProps = {
@@ -33,7 +33,7 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext({} as AuthContextType)
 
-const auth = getAuth(app)
+const auth = getAuth(firebase)
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
@@ -41,35 +41,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const { email, 'displayName': name, uid } = user
-  
+        const { email, displayName: name, uid } = user
+
         setUser({ email, name, uid })
       } else {
-        setUser(null);
+        setUser(null)
         destroyCookie(undefined, 'smart-home.token')
       }
-    });
-  }, []);
+    })
+  }, [])
 
   async function logIn({ email, password }: SignInData) {
-    signInWithEmailAndPassword(auth, email, password).then(async ({ user }) => {
-      const { token, expirationTime } = await user.getIdTokenResult()
+    signInWithEmailAndPassword(auth, email, password)
+      .then(async ({ user }) => {
+        const { token, expirationTime } = await user.getIdTokenResult()
 
-      setCookie(undefined, 'smart-home.token', token, {
-        expires: new Date(expirationTime)
+        setCookie(undefined, 'smart-home.token', token, {
+          expires: new Date(expirationTime),
+        })
+
+        setUser({
+          uid: user.uid,
+          email,
+          name: user.displayName,
+        })
+
+        Router.push(`/`)
       })
-  
-      setUser({
-        uid: user.uid,
-        email,
-        name: user.displayName,
-      });
-  
-      Router.push(`/`)
-
-    }).catch((error) => {
-      console.log(error)
-    })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   async function logOut() {
@@ -78,7 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider value={{ logIn, logOut, user }}>
-      { children }
+      {children}
     </AuthContext.Provider>
   )
 }

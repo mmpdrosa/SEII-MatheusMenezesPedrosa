@@ -1,4 +1,4 @@
-import { styled } from "..";
+import { styled } from '..'
 
 export const Container = styled('div', {
   maxWidth: '25rem',
@@ -6,6 +6,6 @@ export const Container = styled('div', {
   margin: '2.5rem auto',
   padding: '2.5rem',
 
-  background: '$grayElements',
+  background: '$gray200',
   borderRadius: '8px',
 })

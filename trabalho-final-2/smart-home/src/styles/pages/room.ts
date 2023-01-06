@@ -1,7 +1,7 @@
-import { styled } from "..";
-import * as Switch from '@radix-ui/react-switch';
-import * as Slider from '@radix-ui/react-slider';
-import { violet, blackA } from '@radix-ui/colors';
+import * as Slider from '@radix-ui/react-slider'
+import * as Switch from '@radix-ui/react-switch'
+
+import { styled } from '..'
 
 export const RoomContainer = styled('div', {
   width: '100%',
@@ -19,14 +19,14 @@ export const RoomContainer = styled('div', {
     flex: 1,
     textAlign: 'center',
     marginRight: '1.5rem',
+    fontSize: '$5',
   },
 
   a: {
     display: 'flex',
     alignItems: 'center',
     color: '$white',
-  }
-
+  },
 })
 
 export const SensorsContainer = styled('div', {
@@ -38,12 +38,20 @@ export const SensorsContainer = styled('div', {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
+    gap: '0.25rem',
     alignItems: 'center',
+    borderRadius: '12px',
+    padding: '0.5rem',
+    background: '$gray300',
   },
 
   h2: {
-    fontSize: '1rem'
-  }
+    fontSize: '$2',
+  },
+
+  strong: {
+    fontSize: '$2',
+  },
 })
 
 export const DevicesContainer = styled('main', {
@@ -60,10 +68,14 @@ export const DevicesContainer = styled('main', {
 
     padding: '1rem',
 
-    background: '#323238',
+    background: '$gray400',
     borderRadius: '8px',
-  }
+  },
 
+  strong: {
+    color: '$gray600',
+    fontSize: '$2',
+  },
 })
 
 export const SwitchContainer = styled('div', {
@@ -71,29 +83,30 @@ export const SwitchContainer = styled('div', {
   alignItems: 'center',
 
   label: {
-    paddingRight: '1rem'
-  }
+    minWidth: '3rem',
+    paddingRight: '1rem',
+  },
 })
 
 export const SwitchRoot = styled(Switch.Root, {
   all: 'unset',
   width: 42,
   height: 25,
-  backgroundColor: '#823333',
+  backgroundColor: '$red100',
   borderRadius: '9999px',
   position: 'relative',
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  boxShadow: '0 2px 10px $gray300',
   WebkitTapHighlightColor: 'rgba(0, 0, 0, 0)',
-  '&[data-state="checked"]': { backgroundColor: '#91C799' },
+  '&[data-state="checked"]': { backgroundColor: '$green900' },
 })
 
 export const SwitchThumb = styled(Switch.Thumb, {
   display: 'block',
   width: 21,
   height: 21,
-  backgroundColor: 'white',
+  backgroundColor: '$white',
   borderRadius: '9999px',
-  boxShadow: `0 2px 2px ${blackA.blackA7}`,
+  boxShadow: '0 2px 2px $gray300',
   transition: 'transform 100ms',
   transform: 'translateX(2px)',
   willChange: 'transform',
@@ -117,32 +130,32 @@ export const SliderRoot = styled(Slider.Root, {
     width: 20,
     height: 100,
   },
-});
+})
 
 export const SliderTrack = styled(Slider.Track, {
-  backgroundColor: blackA.blackA10,
+  backgroundColor: '$gray200',
   position: 'relative',
   flexGrow: 1,
   borderRadius: '9999px',
 
   '&[data-orientation="horizontal"]': { height: 3 },
   '&[data-orientation="vertical"]': { width: 3 },
-});
+})
 
 export const SliderRange = styled(Slider.Range, {
   position: 'absolute',
-  backgroundColor: 'white',
+  backgroundColor: '$white',
   borderRadius: '9999px',
   height: '100%',
-});
+})
 
 export const SliderThumb = styled(Slider.Thumb, {
   display: 'block',
   width: 20,
   height: 20,
-  backgroundColor: 'white',
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  backgroundColor: '$white',
+  boxShadow: '0 2px 10px $gray300',
   borderRadius: 10,
-  '&:hover': { backgroundColor: violet.violet3 },
-  '&:focus': { outline: 'none', boxShadow: `0 0 0 5px ${blackA.blackA8}` },
-});
+  '&:hover': { backgroundColor: '$gray700' },
+  '&:focus': { outline: 'none', boxShadow: '0 0 0 5px $gray300' },
+})

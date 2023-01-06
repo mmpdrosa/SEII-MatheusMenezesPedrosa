@@ -1,23 +1,25 @@
-import { getDatabase, onValue, ref, set, update } from "firebase/database";
-import { GetServerSideProps } from "next"
-import Link from "next/link";
-import Router from "next/router";
-import { parseCookies } from "nookies"
-import { ArrowLeft, Lightbulb } from "phosphor-react";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
-import { 
-  RoomContainer, 
-  DevicesContainer, 
+import { getDatabase, onValue, ref, set } from 'firebase/database'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import Link from 'next/link'
+import Router from 'next/router'
+import { parseCookies } from 'nookies'
+import { ArrowLeft, Lightbulb, Plugs } from 'phosphor-react'
+import { useContext, useEffect, useState } from 'react'
+
+import { AuthContext } from '../../contexts/AuthContext'
+import {
+  DevicesContainer,
+  RoomContainer,
   SensorsContainer,
-  SwitchContainer, 
+  SliderRange,
+  SliderRoot,
+  SliderThumb,
+  SliderTrack,
+  SwitchContainer,
   SwitchRoot,
   SwitchThumb,
-  SliderRoot,
-  SliderTrack,
-  SliderRange,
-  SliderThumb
-} from "../../styles/pages/room";
+} from '../../styles/pages/room'
 
 type Device = {
   id: string
@@ -27,7 +29,7 @@ type Device = {
 }
 
 type Sensor = {
-  name: string,
+  name: string
   value: number
 }
 
@@ -38,105 +40,135 @@ type Room = {
   sensors: Array<Sensor>
 }
 
-export default function Room() {
+type DeviceType = {
+  type?: 'light' | 'socket' | undefined
+}
+
+export default function RoomDashboard() {
   const [room, setRoom] = useState<Room | null>(null)
 
   const { user } = useContext(AuthContext)
-  
-  useEffect(() => {
-    const { 'id': roomId } = Router.query
 
-    const db = getDatabase();
-    const roomRef = ref(db, `users/${user?.uid}/rooms/${roomId}`);
+  useEffect(() => {
+    const { id: roomId } = Router.query
+
+    const db = getDatabase()
+    const roomRef = ref(db, `users/${user?.uid}/rooms/${roomId}`)
     onValue(roomRef, (snapshot) => {
       setRoom(snapshot.val())
-    });
+    })
   }, [user])
 
   async function handleDevice(index: number, device: Device) {
-    const { 'id': roomId } = Router.query
-    const db = getDatabase();    
+    const { id: roomId } = Router.query
+    const db = getDatabase()
 
     await set(ref(db, `users/${user?.uid}/rooms/${roomId}/devices/${index}`), {
-      ...device
+      ...device,
     })
   }
 
   return (
-    <RoomContainer>
-      <header>
-        <Link href={'/'} prefetch={false}>
-          <ArrowLeft size={24} />
-        </Link>
+    <>
+      <Head>
+        <title>{room?.name}</title>
+      </Head>
 
-        <h1>{room?.name}</h1>
-      </header>
-      <SensorsContainer>
-        {room?.sensors && room.sensors.map((sensor) => {
-          return (
-            <div key={sensor.name}>
-              <h2>{sensor.name}</h2>
-              <strong>{sensor.value}</strong>
-            </div>
-          )
-        })}
-      </SensorsContainer>
+      <RoomContainer>
+        <header>
+          <Link href={'/'} prefetch={false}>
+            <ArrowLeft size={24} />
+          </Link>
 
-      <DevicesContainer>
-        {room?.devices && room.devices.map((device, index) => {
-          return (
-            <div key={device.id}>
-              <Lightbulb size={32} />
+          <h1>{room?.name}</h1>
+        </header>
+        <SensorsContainer>
+          {room?.sensors &&
+            room.sensors.map((sensor) => {
+              return (
+                <div key={sensor.name}>
+                  <h2>{sensor.name === 'temperature' && 'Temperatura'}</h2>
+                  <strong>{sensor.value.toLocaleString('pt-br')} ℃</strong>
+                </div>
+              )
+            })}
+        </SensorsContainer>
 
-              <strong>{device.name}</strong>
+        <DevicesContainer>
+          {room?.devices &&
+            room.devices.map((device, index) => {
+              const deviceType = device.id.split('-')[0] as DeviceType
 
-              {device.type === 'digital' ? (
-                <SwitchContainer>
-                  <label htmlFor="switch">
-                    {room.devices[index].value ? 'ON' : 'OFF'}
-                  </label>
-                  <SwitchRoot 
-                    id="switch" 
-                    onCheckedChange={(checked) => handleDevice(index, { ...room.devices[index], value: checked })}
-                    checked={room.devices[index].value as boolean}
-                  >
-                    <SwitchThumb />
-                  </SwitchRoot>
-                </SwitchContainer>
-              ) : (
-                <SliderRoot 
-                  value={[room.devices[index].value as number]}
-                  max={100} step={1} 
-                  aria-label="Intensity"
-                  onValueChange={(value) => handleDevice(index, { ...room.devices[index], value: value[0] })}
-                >
-                  <SliderTrack>
-                    <SliderRange />
-                  </SliderTrack>
-                  <SliderThumb />
-                </SliderRoot>
-              )}
-            </div>
-          )
-        })}
-      </DevicesContainer>
-    </RoomContainer>
+              return (
+                <div key={device.id}>
+                  {deviceType === String('light') && (
+                    <Lightbulb size={32} weight="thin" />
+                  )}
+                  {deviceType === String('socket') && (
+                    <Plugs size={32} weight="thin" />
+                  )}
+
+                  <strong>{device.name}</strong>
+
+                  {device.type === 'digital' ? (
+                    <SwitchContainer>
+                      <label htmlFor="switch">
+                        {room.devices[index].value ? 'ON' : 'OFF'}
+                      </label>
+                      <SwitchRoot
+                        id="switch"
+                        onCheckedChange={(checked) =>
+                          handleDevice(index, {
+                            ...room.devices[index],
+                            value: checked,
+                          })
+                        }
+                        checked={room.devices[index].value as boolean}
+                      >
+                        <SwitchThumb />
+                      </SwitchRoot>
+                    </SwitchContainer>
+                  ) : (
+                    <SliderRoot
+                      value={[room.devices[index].value as number]}
+                      max={100}
+                      step={1}
+                      aria-label="Intensity"
+                      onValueChange={(value) =>
+                        handleDevice(index, {
+                          ...room.devices[index],
+                          value: value[0],
+                        })
+                      }
+                    >
+                      <SliderTrack>
+                        <SliderRange />
+                      </SliderTrack>
+                      <SliderThumb />
+                    </SliderRoot>
+                  )}
+                </div>
+              )
+            })}
+        </DevicesContainer>
+      </RoomContainer>
+    </>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { ['smart-home.token']: token } = parseCookies(ctx)
+  const { 'smart-home.token': token } = parseCookies(ctx)
 
   if (!token) {
     return {
       redirect: {
         destination: '/login',
-        permanent: false
-      }
+        permanent: false,
+      },
     }
   }
 
   return {
-    props: {}
+    props: {},
   }
 }

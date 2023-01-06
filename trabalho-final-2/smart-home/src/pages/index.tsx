@@ -1,13 +1,25 @@
-import { GetServerSideProps } from "next"
-import Head from "next/head"
-import Router from "next/router"
-import { parseCookies } from "nookies"
-import { Monitor, Plus, SignOut } from "phosphor-react"
-import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "../contexts/AuthContext"
 import { child, get, getDatabase, ref } from 'firebase/database'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import Router from 'next/router'
+import { parseCookies } from 'nookies'
+import {
+  CookingPot,
+  Laptop,
+  Monitor,
+  Moon,
+  Plus,
+  SignOut,
+} from 'phosphor-react'
+import { useContext, useEffect, useState } from 'react'
 
-import { HomeContainer, HomeNav, Room, RoomsContainer } from "../styles/pages/home"
+import { AuthContext } from '../contexts/AuthContext'
+import {
+  HomeContainer,
+  HomeNav,
+  RoomCard,
+  RoomsContainer,
+} from '../styles/pages/home'
 
 type Device = {
   id: string
@@ -17,7 +29,7 @@ type Device = {
 }
 
 type Sensor = {
-  name: string,
+  name: string
   value: number
 }
 
@@ -28,36 +40,36 @@ type Room = {
   sensors: Array<Sensor>
 }
 
-interface HomeInfo {
+interface HomeData {
   homeName: string
   rooms: Array<Room>
 }
 
 type RoomType = {
-  type?: "bedroom" | "kitchen" | "office" | "livingRoom" | undefined
+  type?: 'bedroom' | 'kitchen' | 'livingRoom' | 'office' | undefined
 }
 
 export default function Home() {
   const { logOut, user } = useContext(AuthContext)
 
-  const [homeInfo, setHomeInfo] = useState<HomeInfo | null>(null)
+  const [homeInfo, setHomeInfo] = useState<HomeData | null>(null)
 
   useEffect(() => {
     if (!user) return
 
-    const dbRef = ref(getDatabase());
-    get(child(dbRef, `users/${user?.uid}`)).then((snapshot) => {
-      if (snapshot.exists()) {
-        setHomeInfo(snapshot.val())
-      } else {
-        console.log("No data available");
-      }
-    }).catch((error) => {
-      console.error(error);
-    });
+    const dbRef = ref(getDatabase())
+    get(child(dbRef, `users/${user?.uid}`))
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          setHomeInfo(snapshot.val())
+        } else {
+          setHomeInfo(null)
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }, [user])
-
-  function handleCreateRoom() {}
 
   function handleSignOut() {
     logOut()
@@ -67,7 +79,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>{user?.email}</title>
+        <title>{homeInfo?.homeName}</title>
       </Head>
 
       <HomeContainer>
@@ -85,21 +97,33 @@ export default function Home() {
         </header>
 
         <RoomsContainer>
-          {homeInfo && homeInfo.rooms.map((room, index) => {
-            const roomType = room.id.split('-')[0] as RoomType
-            return (
-              <Room 
-                key={room.id} 
-                href={`/room/${index}`} 
-                type={roomType} 
-                prefetch={false}
-              >
-                <Monitor size={24} weight="thin" />
+          {homeInfo &&
+            homeInfo.rooms.map((room, index) => {
+              const roomType = room.id.split('-')[0] as RoomType
+              return (
+                <RoomCard
+                  key={room.id}
+                  href={`/room/${index}`}
+                  type={roomType}
+                  prefetch={false}
+                >
+                  {roomType === String('bedroom') && (
+                    <Moon size={24} weight="thin" />
+                  )}
+                  {roomType === String('kitchen') && (
+                    <CookingPot size={24} weight="thin" />
+                  )}
+                  {roomType === String('livingRoom') && (
+                    <Monitor size={24} weight="thin" />
+                  )}
+                  {roomType === String('office') && (
+                    <Laptop size={24} weight="thin" />
+                  )}
 
-                <span>{room.name}</span>
-              </Room>
-            )
-          })}
+                  <span>{room.name}</span>
+                </RoomCard>
+              )
+            })}
         </RoomsContainer>
       </HomeContainer>
     </>
@@ -107,18 +131,18 @@ export default function Home() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { ['smart-home.token']: token } = parseCookies(ctx)
+  const { 'smart-home.token': token } = parseCookies(ctx)
 
   if (!token) {
     return {
       redirect: {
         destination: '/login',
-        permanent: false
-      }
+        permanent: false,
+      },
     }
   }
 
   return {
-    props: {}
+    props: {},
   }
 }
