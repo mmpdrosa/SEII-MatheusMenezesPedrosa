@@ -44,9 +44,4 @@ def compute_angle(input_angle, angle, fps=60):
 
 
 if __name__ == '__main__':
-    input_angle = 80
-    angle = 0
-
-    for i in range(200):
-        print(np.rad2deg(angle))
-        angle = compute_angle(input_angle, angle)
+    pass
